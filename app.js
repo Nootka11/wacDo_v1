@@ -3,7 +3,7 @@ const cors = require('cors')
 const mongoose = require('mongoose');
 const productsRoutes = require('./routes/productRoutes')
 
-mongoose.connect('mongodb+srv://acaro:12SQ-hdm@fullstackcours.elrmo.mongodb.net/WacDo?retryWrites=true&w=majority&appName=FullStackCours')
+mongoose.connect('mongodb+srv://xxxx:xxxx@fullstackcours.elrmo.mongodb.net/xxxx?retryWrites=true&w=majority&appName=FullStackCours')
   .then(() => console.log('Conectado a MongoDB correctamente'))
   .catch((err) => console.error('Error al conectar a MongoDB:', err));
  
