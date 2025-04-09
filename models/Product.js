@@ -18,6 +18,11 @@ const productSchema = new Schema({
         type: Number,
         required: true,
       },
+      category: {
+        type: String,  // Opción 1: Si solo quieres almacenar el nombre de la categoría
+        required: true,
+        enum: ['hamburgers', 'accompagnements', 'boissons', 'desserts'] // Opcional: Si tienes un conjunto predefinido de categorías
+      }
  
   
 });
