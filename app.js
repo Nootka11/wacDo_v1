@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors')
 const mongoose = require('mongoose');
 const auth = require('./middleware/auth')
+
 const productsRoutes = require('./routes/productRoutes')
 const menusRoutes = require('./routes/menuRoutes')
 const orderRoutes = require('./routes/orderRoutes')
@@ -37,7 +38,7 @@ app.use(express.json());
 // Usar las rutas de productos con el prefijo '/api/products'
 app.use('/api/products', productsRoutes);  // Aquí asignamos el prefijo '/api/products' a las rutas
 app.use('/api/menus', menusRoutes);
-app.use('/api/orders', auth, orderRoutes);
+app.use('/api/orders', orderRoutes);
 app.use('/api/user', userRoutes);
 
   

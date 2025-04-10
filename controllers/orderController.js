@@ -5,7 +5,7 @@ const Menu = require('../models/Menu');
 
 
 exports.createOrder = (req, res) => {
-  const {  productIds, menuIds, deliveryTime } = req.body;  // Récupère les IDs des produits, des menus, et de l'utilisateur
+  const {  productIds, menuIds } = req.body;  // Récupère les IDs des produits, des menus, et de l'utilisateur
 
   // Premièrement, récupère les produits par leurs IDs
   Product.find({ '_id': { $in: productIds } })
@@ -28,7 +28,6 @@ exports.createOrder = (req, res) => {
               products: [...productIds, ...menuProducts.map(p => p._id)],  // Ajoute les IDs des produits à la commande
               menus: menuIds,  // Ajoute les IDs des menus à la commande
               total: total,  // Total calculé
-              deliveryTime: deliveryTime,  // Heure de livraison
               status: "pending" 
             });
 
@@ -47,7 +46,6 @@ exports.createOrder = (req, res) => {
           //user: userId,
           products: productIds,
           total: total,  // Total calculé uniquement avec les produits
-          deliveryTime: deliveryTime,  // Heure de livraison
           status: "pending" 
         });
 
@@ -86,6 +84,7 @@ exports.getOneOrder = (req, res) => {
 exports.updateOrder = (req, res) => {
     const { id } = req.params;
     const updates = req.body;
+    
   
     Order.findByIdAndUpdate(id, updates, { new: true })
       .then(order => {
@@ -114,19 +113,32 @@ exports.deleteOrder = (req, res) => {
   exports.setPending = (req, res) => {
     Order.findByIdAndUpdate(req.params.id, { status: 'pending' }, { new: true })
       .then(order => res.status(200).json(order))
-      .catch(error => res.status(500).json({ message: 'Error al actualizar el estado a pending', error }));
+      .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Pending', error }));
   };
   
   exports.setPreparing = (req, res) => {
     Order.findByIdAndUpdate(req.params.id, { status: 'preparing' }, { new: true })
       .then(order => res.status(200).json(order))
-      .catch(error => res.status(500).json({ message: 'Error al actualizar el estado a preparing', error }));
+      .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Preparing', error }));
   };
   
-  exports.setCompleted = (req, res) => {
-    Order.findByIdAndUpdate(req.params.id, { status: 'completed' }, { new: true })
+  exports.setCompleted = (req, res) => {;
+    
+    Order.findByIdAndUpdate(req.params.id, { status: 'completed'  }, { new: true })
       .then(order => res.status(200).json(order))
-      .catch(error => res.status(500).json({ message: 'Error al actualizar el estado a completed', error }));
+      .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Completed', error }));
+  };
+  exports.setDelivered = (req, res) => {;
+    const deliveryTime = new Date()
+    Order.findByIdAndUpdate(req.params.id, { status: 'delivered', deliveryTime: deliveryTime  }, { new: true })
+      .then(order => res.status(200).json(order))
+      .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Delivered', error }));
+  };
+  exports.setCancelled = (req, res) => {;
+    
+    Order.findByIdAndUpdate(req.params.id, { status: 'cancelled' }, { new: true })
+      .then(order => res.status(200).json(order))
+      .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Cancelled', error }));
   };
 
 
