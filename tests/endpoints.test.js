@@ -13,7 +13,7 @@ describe('GET /api/products', () => {
 describe('POST /api/orders/create-order', () => {
     it('devrait créer une nouvelle commande correctement', async () => {
       // Simula productos o menús válidos existentes (IDs válidos de tu base de datos)
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2Y4ZDI5M2FjYzk1ZWQ0NTI5NGIzZDgiLCJpYXQiOjE3NDQ2Mzc3MjYsImV4cCI6MTc0NDY4MDkyNn0.xyYLqBpGStB7kU75peNRJajJUq316njTxLUCeJRvC0A'; // Reemplaza con uno real si tienes auth
+      const token = 'TOKEN'; // Reemplaza con uno real si tienes auth
       const res = await request(app)
         .post('/api/orders/create-order')
         .set('Authorization', `Bearer ${token}`)
