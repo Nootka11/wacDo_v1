@@ -1,6 +1,12 @@
-module.exports = (requiredRole) => {
+module.exports = (requiredRoles) => {
     return (req, res, next) => {
-        if (req.role !== requiredRole) {
+        const userRole = req.role;
+
+        // Si requiredRoles es un string, lo convertimos en array
+        const roles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
+
+        if (!roles.includes(userRole)) {
+           
             return res.status(403).json({ message: 'Accès refusé, rôle non autorisé' });
         }
         next();

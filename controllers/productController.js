@@ -39,15 +39,15 @@ exports.createProduct = async (req, res) => {
 // delete product
 exports.deleteProduct = (req,res,next)=>{
   Product.deleteOne({_id: req.params.id})
-  .then(() => res.status(200).json({message:'Product suprime'}))
-  .catch(error =>res.status(400).json(error))
+  .then(() => res.status(200).json({message:'Produit supprimé avec succès'}))
+  .catch(error =>res.status(400).json({message:'Produit non trouvé'}))
 }
 
 
   
 
 exports.getOneProduct =  (req,res,next)=>{
-  console.log (req.params.id)
+  
     Product.findOne({ _id: req.params.id }) 
     .then(product=> res.status(200).json(product))
     .catch(error =>res.status(400).json(error));
@@ -83,12 +83,12 @@ exports.createMultipleProducts = async (req, res) => {
     const newProducts = await Product.insertMany(products);
 
     res.status(201).json({
-      message: 'Productos creados correctamente',
+      message: 'Produits crées',
       products: newProducts
     });
   } catch (error) {
     res.status(500).json({
-      message: 'Error al crear los productos',
+      message: 'Erreur dans la création de produits',
       error: error.message
     });
   }

@@ -1,0 +1,595 @@
+openapi: 3.0.0
+info:
+  title: API de Gestion de Restaurant
+  description: API pour gérer les produits, les menus, les utilisateurs et les commandes dans le système de restaurant.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: API locale pour le restaurant
+tags:
+  - name: Produits
+    description: Endpoints liés aux produits
+  - name: Menus
+    description: Endpoints liés aux menus
+  - name: Commandes
+    description: Endpoints liés aux commandes
+  - name: Utilisateurs
+    description: Endpoints liés aux utilisateurs
+
+paths:
+  /products:
+    get:
+      tags:
+        - Produits
+      summary: Récupérer tous les produits
+      description: Cette route permet de récupérer tous les produits disponibles dans la base de données.
+      responses:
+        '200':
+          description: Liste de produits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  
+  /products/{id}:
+    get:
+      tags:
+        - Produits
+      summary: Récupérer un produit par ID
+      description: Cette route permet de récupérer un produit spécifique en utilisant son ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID du produit à récupérer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Produit trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Produit non trouvé
+
+  /products/create-product:
+    post:
+      tags:
+        - Produits
+      summary: Créer un nouveau produit
+      description: Cette route permet de créer un nouveau produit.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Produit créé avec succès
+        '400':
+          description: Erreur dans la création du produit
+      x-roles: ['admin'] # Roles autorisés
+  
+  /products/create-multiple-products:
+    post:
+      tags:
+        - Produits
+      summary: Créer plusieurs produits
+      description: Cette route permet de créer plusieurs nouveaux produits.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Produits crées
+        '500':
+          description: Erreur dans la création de produits
+      x-roles: ['admin'] # Roles autorisés
+
+  
+
+  /products/{id}/update:
+    put:
+      tags:
+        - Produits
+      summary: Modifier un produit
+      description: Cette route permet de modifier un produit existant en utilisant son ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID du produit à modifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Produit mis à jour avec succès
+        '400':
+          description: Erreur lors de la mise à jour du produit
+      x-roles: ['admin'] # Roles autorisés
+
+  /products/{id}/delete:
+    delete:
+      tags:
+        - Produits
+      summary: Supprimer un produit
+      description: Cette route permet de supprimer un produit en utilisant son ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID du produit à supprimer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Produit supprimé avec succès
+        '400':
+          description: Produit non trouvé
+      x-roles: ['admin'] # Roles autorisés
+
+  /menus:
+    get:
+      tags:
+        - Menus
+      summary: Récupérer tous les menus
+      description: Cette route permet de récupérer tous les menus disponibles.
+      responses:
+        '200':
+          description: Liste de menus
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Menu'
+
+  
+
+  /menus/{id}:
+    get:
+      tags:
+        - Menus
+      summary: Récupérer un menu par ID
+      description: Cette route permet de récupérer un menu spécifique en utilisant son ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID du menu à récupérer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Menu trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        '404':
+          description: Menu non trouvé
+
+  /menus/create-menu:
+    post:
+      tags:
+        - Menus
+      summary: Créer un nouveau menu
+      description: Cette route permet de créer un nouveau menu.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Menu'
+      responses:
+        '201':
+          description: Menu créé avec succès
+        '400':
+          description: Erreur dans la création du menu
+      x-roles: ['admin'] # Roles autorisés
+  
+  /menus/{id}/update:
+    put:
+      tags:
+        - Menus
+      summary: Modifier un menu
+      description: Cette route permet de modifier un menu existant en utilisant son ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID du menu à modifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Menu'
+      responses:
+        '200':
+          description: Menu mis à jour avec succès
+        '400':
+          description: Erreur lors de la mise à jour du menu
+      x-roles: ['admin'] # Roles autorisés
+  
+  /menus/{id}/delete:
+    delete:
+      tags:
+        - Menus
+      summary: Supprimer un menu
+      description: Cette route permet de supprimer un menu en utilisant son ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID du menu à supprimer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Menu supprimé avec succès
+        '404':
+          description: Menu non trouvé
+      x-roles: ['admin'] # Roles autorisés
+
+  /orders:
+    get:
+      tags:
+        - Commandes
+      summary: Récupérer toutes les commandes
+      description: Cette route permet de récupérer toutes les commandes existantes.
+      responses:
+        '200':
+          description: Liste des commandes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+
+  /orders/create-order:             
+    post:
+      tags:
+        - Commandes
+      summary: Créer une nouvelle commande
+      description: Cette route permet de créer une nouvelle commande.
+      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Commande créée avec succès
+        '500':
+          description: Erreur dans la création de la commande
+      
+  /orders/{id}:
+    get:
+      tags:
+        - Commandes
+      summary: Récupérer une commande par ID
+      description: Cette route permet de récupérer une commande spécifique en utilisant son ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID de la commande à récupérer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Commande trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Commande non trouvée
+    put:
+      tags:
+        - Commandes
+      summary: Mettre à jour une commande
+      description: Cette route permet de mettre à jour une commande existante.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID de la commande à modifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Commande mise à jour avec succès
+        '400':
+          description: Erreur lors de la mise à jour de la commande
+      x-roles: ['admin', 'preparateur'] # Roles autorisés
+    delete:
+      tags:
+        - Commandes
+      summary: Supprimer une commande
+      description: Cette route permet de Supprimer une commande existante.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID de la commande à Supprimer
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Commande mise à jour avec succès
+        '400':
+          description: Erreur lors de la mise à jour de la commande
+      x-roles: ['admin'] # Roles autorisés
+
+   
+  
+  /orders/{id}/preparing:
+    put:
+      tags:
+        - Commandes
+      summary: Marquer une commande en préparation
+      description: Cette route permet de marquer une commande en préparation.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID de la commande à marquer en préparation
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Commande marquée comme terminée
+        '500':
+          description: Erreur lors de la mise à jour de la commande
+      x-roles: ['admin', 'preparateur'] # Roles autorisés
+
+  /orders/{id}/completed:
+    put:
+      tags:
+        - Commandes
+      summary: Marquer une commande comme terminée
+      description: Cette route permet de marquer une commande comme terminée.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID de la commande à marquer comme terminée
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Commande marquée comme terminée
+        '500':
+          description: Erreur lors de la mise à jour de la commande
+      x-roles: ['admin', 'preparateur'] # Roles autorisés
+  
+  /orders/{id}/delivered:
+    put:
+      tags:
+        - Commandes
+      summary: Marquer une commande comme livrée
+      description: Cette route permet de marquer une commande comme livrée.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID de la commande à marquer comme livrée
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Commande marquée comme livrée
+        '500':
+          description: Erreur lors de la mise à jour de la commande
+      x-roles: ['admin', 'preparateur', 'accueil'] # Roles autorisés
+
+  /user/signup:
+    post:
+      tags:
+        - Utilisateurs
+      summary: Créer un nouvel utilisateur
+      description: Cette route permet de créer un nouvel utilisateur. Seul l'admin peut accéder à cette route.
+      security:
+        - BearerAuth: [] # Utilisation de l'authentification JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [admin, preparateur, accueil]  # Rôles possibles pour un utilisateur
+              required:
+                - username
+                - password
+                - role
+      responses:
+        '201':
+          description: Utilisateur créé avec succès
+        '400':
+          description: Données invalides
+        '401':
+          description: Non autorisé
+        '500':
+          description: Erreur lors de la création de l'utilisateur
+      x-roles: ['admin'] # Seul l'admin peut créer un utilisateur
+
+  /user/login:
+    post:
+      tags:
+        - Utilisateurs
+      summary: Connexion d'un utilisateur
+      description: Cette route permet à un utilisateur de se connecter. Aucun rôle spécifique n'est nécessaire pour l'accès.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Connexion réussie, un token JWT est renvoyé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  token:
+                    type: string
+        '401':
+          description: Identifiants incorrects
+        '500':
+          description: Erreur lors de la connexion
+      x-roles: []  # Accessible par tous les utilisateurs pour la connexion, pas de restriction de rôle
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        price:
+          type: number
+          format: float
+        category:
+          type: string
+          enum: ['hamburgers', 'accompagnements', 'boissons', 'desserts']        
+      required:
+        - name
+        - description
+        - imageUrl
+        - price
+        - category
+    Menu:
+      type: object
+      properties:
+        title:
+          type: string
+        products:
+          type: array
+          items:
+            type: string
+            $ref: '#/components/schemas/Product'
+        price:
+            type: number
+            format: float
+      required:
+        - title
+        - products
+        - price
+    Order:
+      type: object
+      properties:
+        productIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        menuIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Menu'
+        total:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [pending, preparing, completed, delivered, cancelled]
+        createdAt: 
+          type: string
+          format: date-time
+        deliveryTime:
+          type: string
+          format: date-time
+      required:
+        - total
+        - status
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, preparateur, accueil]
+      required:
+        - username
+        - password
+        - role

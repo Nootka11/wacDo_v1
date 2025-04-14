@@ -50,7 +50,7 @@ exports.login = async (req,res,next)=>{
                 {expiresIn: '12h' }
             )
         });
-
+        
     // end try{}
     } catch (error){
         res.status(500).json({error})

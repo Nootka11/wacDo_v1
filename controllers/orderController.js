@@ -1,62 +1,84 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Menu = require('../models/Menu');
+const { calculateTotal } = require('../utils/orderUtils');
 
 
 
 exports.createOrder = (req, res) => {
-  const {  productIds, menuIds } = req.body;  // Récupère les IDs des produits, des menus, et de l'utilisateur
+  const { productIds, menuIds } = req.body;  // Récupère les IDs des produits, des menus
+ 
 
-  // Premièrement, récupère les produits par leurs IDs
+  // 1. Récupère les produits par leurs IDs
   Product.find({ '_id': { $in: productIds } })
     .then(products => {
+      let allProducts = [];  // Initialiser avec les produits individuels
+      let total = 0;  // Initialiser le total
+
+      // Récupérer les produits individuels et les répéter en fonction de leur quantité
+      const productCount = productIds.reduce((acc, productId) => {
+        acc[productId] = (acc[productId] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Ajouter les produits avec leur quantité dans allProducts
+      products.forEach(product => {
+        const quantity = productCount[product._id.toString()] || 0;
+        for (let i = 0; i < quantity; i++) {
+          allProducts.push(product);
+        }
+      });
+
+      // Calculer le total des produits avec la fonction calculateTotal
+      total += calculateTotal(allProducts);  // Utilisation de calculateTotal pour los productos
+      
+
+      // 2. Si des menus sont présents, récupérer leur prix
       if (menuIds.length > 0) {
-        // Si des menus sont inclus, cherche les produits dans ces menus
         Menu.find({ '_id': { $in: menuIds } })
-          .populate('products')  // Assure-toi que les produits du menu sont inclus dans la réponse
           .then(menus => {
-            // Récupère tous les produits des menus
-            const menuProducts = menus.flatMap(menu => menu.products);
-            const allProducts = [...products, ...menuProducts];  // Combine les produits individuels et ceux des menus
+            let menuTotal = 0;
 
-            // Calcule le prix total de la commande
-            const total = allProducts.reduce((sum, product) => sum + product.price, 0);
-
-            // Crée une nouvelle commande avec le total calculé
-            const newOrder = new Order({
-              //user: userId,
-              products: [...productIds, ...menuProducts.map(p => p._id)],  // Ajoute les IDs des produits à la commande
-              menus: menuIds,  // Ajoute les IDs des menus à la commande
-              total: total,  // Total calculé
-              status: "pending" 
+            // Ajouter le prix des menus au total
+            menus.forEach(menu => {
+              menuTotal += menu.price;  // Prix total du menu
+              // Ajouter l'ID du menu à la liste des produits (pas les produits à l'intérieur du menu)
+              allProducts.push(menu);
             });
 
-            // Sauvegarde la commande
+            // Ajouter le prix total des menus au total général
+            total += menuTotal;
+            
+
+            // 3. Créer la commande
+            const newOrder = new Order({
+              productIds: allProducts.filter(p => p instanceof Product).map(p => p._id),  // Sauvegarder les IDs des produits
+              menuIds: menuIds,  // Sauvegarder les IDs des menus
+              total: total,  // Total calculé
+              status: "pending"
+            });
+
             newOrder.save()
               .then(order => res.status(201).json(order))
               .catch(error => res.status(500).json({ message: 'Erreur lors de la création de la commande', error }));
           })
-          .catch(error => res.status(500).json({ message: 'Erreur lors de la recherche des menus', error }));
+          .catch(error => res.status(500).json({ message: 'Erreur lors de la récupération des menus', error }));
       } else {
-        // Si aucun menu n'est inclus, on traite uniquement les produits
-        const total = products.reduce((sum, product) => sum + product.price, 0);
-
-        // Crée une nouvelle commande avec seulement les produits
+        // Si aucun menu n'est sélectionné, juste les produits
         const newOrder = new Order({
-          //user: userId,
-          products: productIds,
+          productIds: allProducts.map(p => p._id),  // Sauvegarder les IDs des produits
           total: total,  // Total calculé uniquement avec les produits
-          status: "pending" 
+          status: "pending"
         });
 
-        // Sauvegarde la commande
         newOrder.save()
           .then(order => res.status(201).json(order))
           .catch(error => res.status(500).json({ message: 'Erreur lors de la création de la commande', error }));
       }
     })
-    .catch(error => res.status(500).json({ message: 'Erreur lors de la recherche des produits', error }));
+    .catch(error => res.status(500).json({ message: 'Erreur lors de la récupération des produits', error }));
 };
+
 
 
 // Obtener todas las órdenes
@@ -110,7 +132,7 @@ exports.deleteOrder = (req, res) => {
       .catch(error => res.status(500).json({ message: 'Error al eliminar la orden', error }));
   };
 
-  exports.setPending = (req, res) => {
+  exports.setPending = (req, res) => { 
     Order.findByIdAndUpdate(req.params.id, { status: 'pending' }, { new: true })
       .then(order => res.status(200).json(order))
       .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Pending', error }));
@@ -122,19 +144,19 @@ exports.deleteOrder = (req, res) => {
       .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Preparing', error }));
   };
   
-  exports.setCompleted = (req, res) => {;
+  exports.setCompleted = (req, res) => {
     
     Order.findByIdAndUpdate(req.params.id, { status: 'completed'  }, { new: true })
       .then(order => res.status(200).json(order))
       .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Completed', error }));
   };
-  exports.setDelivered = (req, res) => {;
+  exports.setDelivered = (req, res) => {
     const deliveryTime = new Date()
     Order.findByIdAndUpdate(req.params.id, { status: 'delivered', deliveryTime: deliveryTime  }, { new: true })
       .then(order => res.status(200).json(order))
       .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Delivered', error }));
   };
-  exports.setCancelled = (req, res) => {;
+  exports.setCancelled = (req, res) => {
     
     Order.findByIdAndUpdate(req.params.id, { status: 'cancelled' }, { new: true })
       .then(order => res.status(200).json(order))

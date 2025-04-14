@@ -10,6 +10,9 @@ const menusRoutes = require('./routes/menuRoutes')
 const orderRoutes = require('./routes/orderRoutes')
 const userRoutes = require('./routes/userRoutes')
 
+const swaggerConfig = require('./swaggerConfig');
+
+
 const mongoURI = process.env.MONGODB_URI;
 
 mongoose.connect(mongoURI)
@@ -18,6 +21,7 @@ mongoose.connect(mongoURI)
 
 
 const app = express();
+swaggerConfig(app);
 
   //Esto solo deja entrar a los orígenes definidos en whitelist.
   const whitelist = ['http://localhost:3000', 'https://tudominio.com'];
@@ -40,6 +44,7 @@ app.use('/api/products', productsRoutes);  // Aquí asignamos el prefijo '/api/p
 app.use('/api/menus', menusRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/user', userRoutes);
+
 
   
   app.listen(3000, ()=>{

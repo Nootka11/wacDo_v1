@@ -9,7 +9,7 @@ const menuSchema = new Schema({
     },
     products: [{
       type: Schema.Types.ObjectId,
-      ref: 'Products'  // Referencia a los platos que pertenecen a este menú
+      ref: 'Product'  // Referencia a los platos que pertenecen a este menú
     }],
     price:{
         type:Number,

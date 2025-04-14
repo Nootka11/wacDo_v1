@@ -24,7 +24,8 @@ router.get('/completed', orderController.getCompletedOrders);
 router.get('/:id', orderController.getOneOrder);
 
 // Ruta para crear una nueva orden
-router.post('/create-order', auth, roleAuthorization(['admin', 'accueil']), orderController.createOrder);
+//auth, roleAuthorization(['admin', 'accueil']),
+router.post('/create-order',  auth, roleAuthorization(['admin','accueil']),orderController.createOrder);
 
 //setDelivered setCancelled
 
