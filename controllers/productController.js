@@ -3,6 +3,7 @@ const fs = require('fs');
 
 // Función para crear un nuevo producto
 exports.createProduct = async (req, res) => {
+  console.log('creando')
     try {
       const { name, description, imageUrl, price, category } = req.body;
   

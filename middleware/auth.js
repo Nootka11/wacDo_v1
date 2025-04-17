@@ -27,5 +27,5 @@ module.exports =  async (req,res,next) => {
     }
     
 }
-
+console.log
 //Authorization : Bearer la id del user

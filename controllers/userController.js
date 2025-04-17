@@ -43,6 +43,8 @@ exports.login = async (req,res,next)=>{
         //Si tout va bien, le user existe et le mdp est valid
         res.status(200).json({
             userId:user._id,
+            role: user.role,
+            userName: user.username,
             token:jwt.sign(
                 { userId:user._id},
                 //clé secrete pour le encodage : chaine longue et aleatoire

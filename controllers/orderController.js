@@ -6,6 +6,7 @@ const { calculateTotal } = require('../utils/orderUtils');
 
 
 exports.createOrder = (req, res) => {
+  console.log('create order en back', req.body)
   const { productIds, menuIds } = req.body;  // Récupère les IDs des produits, des menus
  
 

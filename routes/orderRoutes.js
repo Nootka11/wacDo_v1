@@ -8,6 +8,9 @@ const orderController = require('../controllers/orderController');
 
 // Ruta para obtener todas las órdenes
 router.get('/', orderController.getAllOrders);
+// Ruta para crear una nueva orden
+
+router.post('/',  auth, roleAuthorization(['admin','accueil']),orderController.createOrder);
 
 // Ruta para obtener las órdenes pendientes
 router.get('/pending', orderController.getPendingOrders);
@@ -23,9 +26,7 @@ router.get('/completed', orderController.getCompletedOrders);
 // Ruta para obtener una orden específica por su ID
 router.get('/:id', orderController.getOneOrder);
 
-// Ruta para crear una nueva orden
-//auth, roleAuthorization(['admin', 'accueil']),
-router.post('/create-order',  auth, roleAuthorization(['admin','accueil']),orderController.createOrder);
+
 
 //setDelivered setCancelled
 

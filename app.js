@@ -24,7 +24,7 @@ const app = express();
 swaggerConfig(app);
 
   //Esto solo deja entrar a los orígenes definidos en whitelist.
-  const whitelist = ['http://localhost:3000', 'https://tudominio.com'];
+  const whitelist = ['http://localhost:3000','http://localhost:5173', 'https://tudominio.com'];
   
   var corsOptionsDelegate = function (req, callback) {
     var corsOptions;

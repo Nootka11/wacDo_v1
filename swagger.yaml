@@ -32,6 +32,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+    post:
+      tags:
+        - Produits
+      summary: Créer un nouveau produit
+      description: Cette route permet de créer un nouveau produit.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Produit créé avec succès
+        '400':
+          description: Erreur dans la création du produit
+      x-roles: ['admin'] # Roles autorisés
   
   /products/{id}:
     get:
@@ -55,15 +74,18 @@ paths:
                 $ref: '#/components/schemas/Product'
         '404':
           description: Produit non trouvé
-
-  /products/create-product:
-    post:
+    put:
       tags:
         - Produits
-      summary: Créer un nouveau produit
-      description: Cette route permet de créer un nouveau produit.
-      security:
-        - BearerAuth: []
+      summary: Modifier un produit
+      description: Cette route permet de modifier un produit existant en utilisant son ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID du produit à modifier
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -71,10 +93,28 @@ paths:
             schema:
               $ref: '#/components/schemas/Product'
       responses:
-        '201':
-          description: Produit créé avec succès
+        '200':
+          description: Produit mis à jour avec succès
         '400':
-          description: Erreur dans la création du produit
+          description: Erreur lors de la mise à jour du produit
+      x-roles: ['admin'] # Roles autorisés
+    delete:
+      tags:
+        - Produits
+      summary: Supprimer un produit
+      description: Cette route permet de supprimer un produit en utilisant son ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID du produit à supprimer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Produit supprimé avec succès
+        '400':
+          description: Produit non trouvé
       x-roles: ['admin'] # Roles autorisés
   
   /products/create-multiple-products:
@@ -100,51 +140,7 @@ paths:
 
   
 
-  /products/{id}/update:
-    put:
-      tags:
-        - Produits
-      summary: Modifier un produit
-      description: Cette route permet de modifier un produit existant en utilisant son ID.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: ID du produit à modifier
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Product'
-      responses:
-        '200':
-          description: Produit mis à jour avec succès
-        '400':
-          description: Erreur lors de la mise à jour du produit
-      x-roles: ['admin'] # Roles autorisés
-
-  /products/{id}/delete:
-    delete:
-      tags:
-        - Produits
-      summary: Supprimer un produit
-      description: Cette route permet de supprimer un produit en utilisant son ID.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: ID du produit à supprimer
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Produit supprimé avec succès
-        '400':
-          description: Produit non trouvé
-      x-roles: ['admin'] # Roles autorisés
+    
 
   /menus:
     get:
@@ -161,6 +157,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Menu'
+    post:
+      tags:
+        - Menus
+      summary: Créer un nouveau menu
+      description: Cette route permet de créer un nouveau menu.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Menu'
+      responses:
+        '201':
+          description: Menu créé avec succès
+        '400':
+          description: Erreur dans la création du menu
+      x-roles: ['admin'] # Roles autorisés
 
   
 
@@ -186,29 +201,6 @@ paths:
                 $ref: '#/components/schemas/Menu'
         '404':
           description: Menu non trouvé
-
-  /menus/create-menu:
-    post:
-      tags:
-        - Menus
-      summary: Créer un nouveau menu
-      description: Cette route permet de créer un nouveau menu.
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Menu'
-      responses:
-        '201':
-          description: Menu créé avec succès
-        '400':
-          description: Erreur dans la création du menu
-      x-roles: ['admin'] # Roles autorisés
-  
-  /menus/{id}/update:
     put:
       tags:
         - Menus
@@ -235,8 +227,6 @@ paths:
         '400':
           description: Erreur lors de la mise à jour du menu
       x-roles: ['admin'] # Roles autorisés
-  
-  /menus/{id}/delete:
     delete:
       tags:
         - Menus
@@ -257,6 +247,8 @@ paths:
         '404':
           description: Menu non trouvé
       x-roles: ['admin'] # Roles autorisés
+  
+
 
   /orders:
     get:
@@ -272,9 +264,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Order'
-
-  /orders/create-order:             
+                  $ref: '#/components/schemas/Order'            
     post:
       tags:
         - Commandes
