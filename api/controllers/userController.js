@@ -49,12 +49,26 @@ exports.login = async (req,res,next)=>{
                 { userId:user._id},
                 //clé secrete pour le encodage : chaine longue et aleatoire
                 'RANDOM_TOKEN_SECRET',
-                {expiresIn: '12h' }
-            )
+                {expiresIn: '50s' }
+            ),
+            expiresIn: 50
         });
         
     // end try{}
     } catch (error){
         res.status(500).json({error})
     }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+          if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Token expirado' });
+            console.log('token expiree')
+          }
+          return res.status(401).json({ error: 'Token inválido' });
+          console.log('token invalide')
+        }
+        req.user = decoded;
+        next();
+      });
 }

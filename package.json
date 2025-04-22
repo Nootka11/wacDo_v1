@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "api/server.js",
+  "main": "api/index.js",
   "scripts": {
     "test": "jest",
     "start": "node api/server.js"
