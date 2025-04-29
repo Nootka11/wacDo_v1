@@ -41,17 +41,20 @@ exports.login = async (req,res,next)=>{
             res.status(401).json({message:'Mot de passe incorrect'})
         }
         //Si tout va bien, le user existe et le mdp est valid
+
+        const expiresInSeconds = 24 * 60 * 60; // 24 horas en segundos
+        const token = jwt.sign(
+            { userId: user._id },
+            'RANDOM_TOKEN_SECRET',
+            { expiresIn: expiresInSeconds }
+        );
+
         res.status(200).json({
             userId:user._id,
             role: user.role,
             userName: user.username,
-            token:jwt.sign(
-                { userId:user._id},
-                //clé secrete pour le encodage : chaine longue et aleatoire
-                'RANDOM_TOKEN_SECRET',
-                {expiresIn: '50s' }
-            ),
-            expiresIn: 50
+            token,
+            expiresIn: expiresInSeconds
         });
         
     // end try{}
