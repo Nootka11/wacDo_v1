@@ -26,7 +26,7 @@ const app = express();
 swaggerConfig(app);
 
   //Esto solo deja entrar a los orígenes definidos en whitelist.
-  const whitelist = ['http://localhost:3000','http://localhost:5173', 'https://poetic-strudel-ab45aa.netlify.app/'];
+  const whitelist = ['http://localhost:3000','http://localhost:5173', 'https://poetic-strudel-ab45aa.netlify.app'];
   
   var corsOptionsDelegate = function (req, callback) {
     var corsOptions;
