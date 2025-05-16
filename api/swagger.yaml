@@ -519,7 +519,9 @@ components:
           format: float
         category:
           type: string
-          enum: ['hamburgers', 'accompagnements', 'boissons', 'desserts']        
+          enum: ['hamburgers', 'accompagnements', 'boissons', 'desserts'] 
+        disponible:
+          type: boolean       
       required:
         - name
         - description

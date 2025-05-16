@@ -1,11 +1,25 @@
 const Product = require("../models/Product");
 const fs = require('fs');
 
-// Función para crear un nuevo producto
+
+// 
 exports.createProduct = async (req, res) => {
-  console.log('creando')
+  
+  console.log('creando');
+  console.log('BODY',req.body); 
+  console.log('file',req.file);
+
+  if (!req.body) {
+    return res.status(400).json({ message: 'No se recibieron datos en el body' });
+  }
+
+ 
     try {
-      const { name, description, imageUrl, price, category } = req.body;
+      const { name, description,  price, category, stock } = req.body || {};
+
+      // Construir la ruta de la imagen
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    // console.log(req.file)
   
       // Crear un nuevo producto usando el modelo Product
       const newProduct = new Product({
@@ -13,7 +27,8 @@ exports.createProduct = async (req, res) => {
         description,
         imageUrl,
         price, 
-        category
+        category,
+        stock
       });
       
   
@@ -31,12 +46,42 @@ exports.createProduct = async (req, res) => {
       });
     }
   };
-  //modificar un producto
-  exports.modifyProduct = (req,res,next)=>{
-    Product.updateOne({_id: req.params.id}, {...req.body, _id:req.params.id})
-    .then(() => res.status(200).json({message:'Product modifié'}))
-    .catch(error =>res.status(400).json(error))
+
+  //===========================
+  // Modifier un product 
+  exports.modifyProduct = async (req, res) => {
+    try{
+      console.log('modificando');
+      
+      const { name, description,  price, category, stock } = req.body || {};
+      const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+      const updatedFields = {
+      name,
+      description,
+      price,
+      category,
+      stock
+    };
+
+    if (imageUrl) {
+      updatedFields.imageUrl = imageUrl;
+    }
+
+       await Product.updateOne({_id: req.params.id}, updatedFields);
+       res.status(200).json({message: 'Produit modifié avec succès !'})
+   
+
+    } catch (error){
+      console.error("Erreur lors de la modification du produit :", error);
+      res.status(400).json({ message: 'Erreur lors de la modification', error: error.message });
+
+    }
+    
+   
 }
+
+
 // delete product
 exports.deleteProduct = (req,res,next)=>{
   Product.deleteOne({_id: req.params.id})
@@ -53,27 +98,24 @@ exports.getOneProduct =  (req,res,next)=>{
     .then(product=> res.status(200).json(product))
     .catch(error =>res.status(400).json(error));
 }
-
-exports.getAllProducts = (req, res, next) => {
-  Product.find()
-    .then(products => res.status(200).json(products))
-    .catch(error => res.status(400).json(error))
-   }
-
-// Obtener productos por categoría
-exports.getProductsByCategory = async (req, res) => {
+exports.getAllProducts = async (req, res) => {
   try {
-    const category = req.params.category;
-    const products = await Product.find({ category });
+    const { category } = req.query;
+    let products;
+
+    if (category) {
+      products = await Product.find({ category });
+    } else {
+      products = await Product.find();
+    }
 
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({
-      message: 'Error al obtener los productos',
-      error: error.message
-    });
+    res.status(400).json({ message: "Erreur lors de la récupération des produits", error: error.message });
   }
 };
+
+
 
 // Función para crear múltiples productos
 exports.createMultipleProducts = async (req, res) => {

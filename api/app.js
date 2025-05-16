@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors')
 const mongoose = require('mongoose');
 const auth = require('./middleware/auth')
+const upload = require('./middleware/multer-config');
 
 // const productsRoutes = require('./routes/productRoutes')
 // const menusRoutes = require('./routes/menuRoutes')
@@ -40,13 +41,11 @@ swaggerConfig(app);
   
 app.use(cors(corsOptionsDelegate))
 app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
-// Usar las rutas de productos con el prefijo '/api/products'
-// app.use('/api/products', productsRoutes);  // Aquí asignamos el prefijo '/api/products' a las rutas
-// app.use('/api/menus', menusRoutes);
-// app.use('/api/orders', orderRoutes);
-// app.use('/api/user', userRoutes);
 
+
+app.use('/uploads', express.static('api/uploads'));
 app.use('/api', allRoutes);
 
   

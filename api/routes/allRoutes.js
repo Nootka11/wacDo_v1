@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router();
 const auth = require('../middleware/auth')
 const roleAuthorization = require('../middleware/roleMiddleware')
+const upload = require('../middleware/multer-config');
+const User = require('../models/User');
 
 
 //*** USER ***
@@ -10,6 +12,12 @@ const userCtrl = require('../controllers/userController')
 
 router.post('/user/signup', auth, roleAuthorization('admin'), userCtrl.signup);
 router.post('/user/login', userCtrl.login)
+router.post('/reset-password', async (req, res) => {
+  const bcrypt = require('bcrypt');
+  const newPassword = await bcrypt.hash('boli', 10);
+  await User.updateOne({ username: 'Ada' }, { password: newPassword });
+  res.send('Contraseña actualizada');
+});
 
 
 //*** PRODUCT ***
@@ -17,18 +25,17 @@ router.post('/user/login', userCtrl.login)
 const productController = require('../controllers/productController')
 
 // Ruta para crear un nuevo producto
-router.post('/products',auth, roleAuthorization(['admin']), productController.createProduct);
+router.post('/products',auth, roleAuthorization(['admin']),  upload.single('imageUrl'),productController.createProduct);
 // Ruta para añadir varios productos a la vez
 router.post('/products/create-multiple-products', auth, roleAuthorization(['admin']), productController.createMultipleProducts);
 
 router.get('/products/',  productController.getAllProducts);
 router.get('/products/:id',  productController.getOneProduct);
-// Ruta para obtener productos por categoría
-router.get('/products/category/:category', productController.getProductsByCategory);
+
 
 
 //Modifier un produit
-router.put('/products/:id', auth, roleAuthorization(['admin']), productController.modifyProduct)
+router.put('/products/:id', auth, roleAuthorization(['admin']), upload.single('imageUrl'), productController.modifyProduct)
 // delete
 router.delete ('/products/:id', auth, roleAuthorization(['admin']), productController.deleteProduct)
 
@@ -38,14 +45,14 @@ router.delete ('/products/:id', auth, roleAuthorization(['admin']), productContr
 const menuController = require('../controllers/menuController')
 
 // Ruta para crear un nuevo menu
-router.post('/menus', auth, roleAuthorization(['admin']), menuController.createMenu);
+router.post('/menus', auth, roleAuthorization(['admin']), upload.single('image'), menuController.createMenu);
 
 router.get('/menus',  menuController.getAllMenus);
 router.get('/menus/:id',  menuController.getOneMenu);
 
 
 //Modifier un menu
-router.put('/menus/:id', auth, roleAuthorization(['admin']), menuController.modifyMenu)
+router.put('/menus/:id', auth, roleAuthorization(['admin']), upload.single('image'),  menuController.modifyMenu)
 // delete
 router.delete ('/menus/:id',  auth, roleAuthorization(['admin']), menuController.deleteMenu)
 
@@ -57,27 +64,13 @@ const orderController = require('../controllers/orderController');
 
 // Ruta para obtener todas las órdenes
 router.get('/orders', orderController.getAllOrders);
+
 // Ruta para crear una nueva orden
-
 router.post('/orders',  auth, roleAuthorization(['admin','accueil']),orderController.createOrder);
-
-// Ruta para obtener las órdenes pendientes
-router.get('/orders/pending', orderController.getPendingOrders);
-
-// Ruta para obtener las órdenes en preparación
-router.get('/orders/preparing', orderController.getPreparingOrders);
-
-// Ruta para obtener las órdenes completadas
-router.get('/orders/completed', orderController.getCompletedOrders);
-
 
 
 // Ruta para obtener una orden específica por su ID
 router.get('/orders/:id', orderController.getOneOrder);
-
-
-
-//setDelivered setCancelled
 
 // Ruta para actualizar una orden (por ejemplo, marcarla como preparada)
 router.put('/orders/:id', auth, roleAuthorization(['admin', 'preparateur']),orderController.updateOrder);
@@ -91,5 +84,7 @@ router.put('/orders/:id/cancelled', auth, roleAuthorization(['admin']), orderCon
 
 // Ruta para eliminar una orden
 router.delete('/orders/:id', auth, roleAuthorization(['admin']),orderController.deleteOrder);
+
+
 
 module.exports = router;

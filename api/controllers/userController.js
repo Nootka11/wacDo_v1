@@ -24,10 +24,10 @@ exports.signup = async (req,res,next)=>{
 };
 
 
-// connexion
+// Connexion
 exports.login = async (req,res,next)=>{
     try{
-        //chercher l user dans bd
+        //chercher l'user dans bd
         const user = await User.findOne({username:req.body.username})
         if(!user){
             res.status(401).json({
@@ -56,6 +56,7 @@ exports.login = async (req,res,next)=>{
             token,
             expiresIn: expiresInSeconds
         });
+        console.log(token)
         
     // end try{}
     } catch (error){

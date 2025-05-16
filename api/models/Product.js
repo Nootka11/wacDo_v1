@@ -6,26 +6,30 @@ const productSchema = new Schema({
         type: String,
         required: true,
       },
-      description: {
+    description: {
         type: String,
         required: true,
       },
-      imageUrl: {
+    imageUrl: {
         type: String,
         required: true,
       },
-      price: {
+    price: {
         type: Number,
         required: true,
       },
-      category: {
+    category: {
         type: String,  // Opción 1: Si solo quieres almacenar el nombre de la categoría
         required: true,
         enum: ['hamburgers', 'accompagnements', 'boissons', 'desserts'] // Opcional: Si tienes un conjunto predefinido de categorías
-      }
+      },
+    stock: { 
+      type: Boolean, 
+      default: true 
+    }
  
   
-});
+}, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);
 

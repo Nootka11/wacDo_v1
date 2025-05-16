@@ -83,11 +83,23 @@ exports.createOrder = (req, res) => {
 
 
 // Obtener todas las órdenes
-exports.getAllOrders = (req, res) => {
-    Order.find()
-      .then(orders => res.status(200).json(orders))
-      .catch(error => res.status(500).json({ message: 'Error al obtener las órdenes', error }));
-  };
+exports.getAllOrders = async (req, res) => {
+  try{
+    const { status } = req.query;
+  console.log('REQ status', status);
+  let orders;
+  if(status){
+    orders = await Order.find({status}).sort({ createdAt: -1 });
+
+  }else{
+    orders = await Order.find().sort({ createdAt: -1 });
+  }
+  res.status(200).json(orders);
+
+  } catch (error){
+      res.status(500).json({ message: 'Error al obtener las órdenes', error });
+  }
+};
 
 // Obtener una orden específica
 exports.getOneOrder = (req, res) => {
@@ -164,27 +176,3 @@ exports.deleteOrder = (req, res) => {
       .catch(error => res.status(500).json({ message: 'Erreur lors de la mise à jour de l`état en Cancelled', error }));
   };
 
-
-  // Obtener las órdenes pendientes (status: "pending")
-exports.getPendingOrders = (req, res) => {
-    Order.find({ status: "pending" })  // Filtramos solo las órdenes con estado "pending"
-      .sort({ deliveryTime: 1 })  // Ordenamos por la hora de entrega (de más temprana a más tarde)
-      .then(orders => res.status(200).json(orders))  // Devolvemos las órdenes ordenadas
-      .catch(error => res.status(500).json({ message: 'Error al obtener las órdenes pendientes', error }));
-  };
-  
-  // Obtener las órdenes en preparación (status: "preparing")
-  exports.getPreparingOrders = (req, res) => {
-    Order.find({ status: "preparing" })  // Filtramos solo las órdenes con estado "preparing"
-      .sort({ deliveryTime: 1 })  // Ordenamos por la hora de entrega (de más temprana a más tarde)
-      .then(orders => res.status(200).json(orders))  // Devolvemos las órdenes ordenadas
-      .catch(error => res.status(500).json({ message: 'Error al obtener las órdenes en preparación', error }));
-  };
-  
-  // Obtener las órdenes completadas (status: "completed")
-  exports.getCompletedOrders = (req, res) => {
-    Order.find({ status: "completed" })  // Filtramos solo las órdenes con estado "completed"
-      .sort({ deliveryTime: 1 })  // Ordenamos por la hora de entrega (de más temprana a más tarde)
-      .then(orders => res.status(200).json(orders))  // Devolvemos las órdenes ordenadas
-      .catch(error => res.status(500).json({ message: 'Error al obtener las órdenes completadas', error }));
-  };
