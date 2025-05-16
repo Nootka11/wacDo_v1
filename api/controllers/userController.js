@@ -56,7 +56,7 @@ exports.login = async (req,res,next)=>{
             token,
             expiresIn: expiresInSeconds
         });
-        console.log(token)
+      
         
     // end try{}
     } catch (error){
