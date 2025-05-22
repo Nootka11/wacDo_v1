@@ -11,13 +11,14 @@ const userCtrl = require('../controllers/userController')
 
 
 router.post('/user/signup', auth, roleAuthorization('admin'), userCtrl.signup);
-router.post('/user/login', userCtrl.login)
-router.post('/reset-password', async (req, res) => {
-  const bcrypt = require('bcrypt');
-  const newPassword = await bcrypt.hash('boli', 10);
-  await User.updateOne({ username: 'Ada' }, { password: newPassword });
-  res.send('Contraseña actualizada');
-});
+router.post('/user/login', userCtrl.login);
+router.post('/user/logout', userCtrl.logout);
+// router.post('/reset-password', async (req, res) => {
+//   const bcrypt = require('bcrypt');
+//   const newPassword = await bcrypt.hash('*****', 10);
+//   await User.updateOne({ username: 'Ada' }, { password: newPassword });
+//   res.send('Contraseña actualizada');
+// });
 
 
 //*** PRODUCT ***
