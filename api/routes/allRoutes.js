@@ -24,9 +24,9 @@ router.post('/reset-password', async (req, res) => {
 //=============
 const productController = require('../controllers/productController')
 
-// Ruta para crear un nuevo producto
+// Route pour creer un nouveau produit
 router.post('/products',auth, roleAuthorization(['admin']),  upload.single('imageUrl'),productController.createProduct);
-// Ruta para añadir varios productos a la vez
+// Route pour ajouter plusieurs produits
 router.post('/products/create-multiple-products', auth, roleAuthorization(['admin']), productController.createMultipleProducts);
 
 router.get('/products/',  productController.getAllProducts);
@@ -44,7 +44,7 @@ router.delete ('/products/:id', auth, roleAuthorization(['admin']), productContr
 // ============
 const menuController = require('../controllers/menuController')
 
-// Ruta para crear un nuevo menu
+// Route pour creer un nouveau menu
 router.post('/menus', auth, roleAuthorization(['admin']), upload.single('image'), menuController.createMenu);
 
 router.get('/menus',  menuController.getAllMenus);
@@ -59,13 +59,13 @@ router.delete ('/menus/:id',  auth, roleAuthorization(['admin']), menuController
 
 // *** ORDERS ***
 //==============
-// Requiere el controlador de órdenes
+
 const orderController = require('../controllers/orderController');
 
-// Ruta para obtener todas las órdenes
+// Route afficher toutes les commandes
 router.get('/orders', orderController.getAllOrders);
 
-// Ruta para crear una nueva orden
+// Ruta pour creer une nouvelle commande
 router.post('/orders',  auth, roleAuthorization(['admin','accueil']),orderController.createOrder);
 
 
