@@ -2,12 +2,10 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User');
 
-
-
-// creation des nouveaux utilisateurs
+// Création des nouveaux utilisateurs
 exports.signup = async (req, res, next) => {
     try {
-        // encryopter le mot de pass
+        // encrypter le mot de pass
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         const user = new User({
@@ -23,26 +21,25 @@ exports.signup = async (req, res, next) => {
     }
 };
 
-
 // Connexion
 exports.login = async (req, res, next) => {
     try {
-        //chercher l'user dans bd
+        //Cherche l'utilisateur dans base de données
         const user = await User.findOne({ username: req.body.username })
         if (!user) {
-            res.status(401).json({
-                //normalement ne doit ps ifor
-                message: 'El user n existe pas, Paire identifiant/mot de passe incorrect'
+            return res.status(401).json({
+                //Normalement ne doit pas avoir cette info : L'utilisateur n'existe pas,
+                message: 'Paire identifiant/mot de passe incorrect'
             });
         }
-        //comparation de mot de pass encryptées, devuelve true o false
+        // Comparaison des mot de passe encryptées, true ou false
         const mdpValid = await bcrypt.compare(req.body.password, user.password)
         if (!mdpValid) {
-            res.status(401).json({ message: 'Mot de passe incorrect' })
+            return res.status(401).json({ message: 'Mot de passe incorrect' })
         }
-        //Si tout va bien, le user existe et le mdp est valid
 
-        const expiresInSeconds = 24 * 60 * 60; // 24 horas en segundos
+        //Si tout va bien, l'utilisateur existe et le mdp est valide
+        const expiresInSeconds = 24 * 60 * 60; // 24 heures
         const token = jwt.sign(
             { userId: user._id },
             'RANDOM_TOKEN_SECRET',
@@ -57,33 +54,34 @@ exports.login = async (req, res, next) => {
             expiresIn: expiresInSeconds
         });
 
-
-
     } catch (error) {
-        res.status(500).json({ error })
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            if (err.name === 'TokenExpiredError') {
-                return res.status(401).json({ error: 'Token expirado' });
-                console.log('token expiree')
-            }
-            return res.status(401).json({ error: 'Token inválido' });
-            console.log('token invalide')
+        res.status(500).json({  
+            error: error.message,
+            stack: error.stack   
+            })
         }
-        req.user = decoded;
-        next();
-    });
+
+    // jwt.verify(token, 'RANDOM_TOKEN_SECRET', (err, decoded) => {
+    //     if (err) {
+    //         if (err.name === 'TokenExpiredError') {
+    //             return res.status(401).json({ error: 'Token expirado' });
+    //             //console.log('token expiree')
+    //         }
+    //         return res.status(401).json({ error: 'Token inválido' });
+    //         //console.log('token invalide')
+    //     }
+    //     req.user = decoded;
+    //     next();
+    // });
 }
 
 // Déconnexion de l'utilisateur
-exports.logout = async (req, res) => {
-  try {
-    // Le token doit être supprimé côté client (localStorage / cookies)
-    // Ici, on envoie juste un message de confirmation
-    res.status(200).json({ message: 'Déconnexion réussie. Veuillez supprimer le token côté client.' });
-  } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la déconnexion', error: error.message });
-  }
-};
+// exports.logout = async (req, res) => {
+//     try {
+//         // Le token doit être supprimé côté client (localStorage / cookies)
+//         // Ici, on envoie juste un message de confirmation
+//         res.status(200).json({ message: 'Déconnexion réussie. Veuillez supprimer le token côté client.' });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Erreur lors de la déconnexion', error: error.message });
+//     }
+// };

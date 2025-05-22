@@ -6,10 +6,6 @@ const mongoose = require('mongoose');
 const auth = require('./middleware/auth')
 const upload = require('./middleware/multer-config');
 
-// const productsRoutes = require('./routes/productRoutes')
-// const menusRoutes = require('./routes/menuRoutes')
-// const orderRoutes = require('./routes/orderRoutes')
-// const userRoutes = require('./routes/userRoutes')
 
 const allRoutes = require('./routes/allRoutes')
 
