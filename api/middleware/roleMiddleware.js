@@ -2,7 +2,6 @@ module.exports = (requiredRoles) => {
     return (req, res, next) => {
         const userRole = req.role;
 
-        // Si requiredRoles es un string, lo convertimos en array
         const roles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
 
         if (!roles.includes(userRole)) {

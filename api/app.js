@@ -3,14 +3,10 @@ require('dotenv').config();  // Cargar las variables de entorno
 const express = require('express');
 const cors = require('cors')
 const mongoose = require('mongoose');
-const auth = require('./middleware/auth')
-const upload = require('./middleware/multer-config');
-
 
 const allRoutes = require('./routes/allRoutes')
 
 const swaggerConfig = require('./swaggerConfig');
-
 
 const mongoURI = process.env.MONGODB_URI;
 
@@ -18,37 +14,26 @@ mongoose.connect(mongoURI)
   .then(() => console.log('Conectado a MongoDB correctamente'))
   .catch((err) => console.error('Error al conectar a MongoDB:', err));
 
-
 const app = express();
 swaggerConfig(app);
 
-  //Esto solo deja entrar a los orígenes definidos en whitelist.
-  const whitelist = ['http://localhost:3000','http://localhost:5173', 'https://poetic-strudel-ab45aa.netlify.app', 'https://wacdo-v1.onrender.com/'];
-  
-  var corsOptionsDelegate = function (req, callback) {
-    var corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-      corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
-    } else {
-      corsOptions = { origin: false } // disable CORS for this request
-    }
-    callback(null, corsOptions) // callback expects two parameters: error and options
+
+const whitelist = ['http://localhost:3000', 'http://localhost:5173', 'https://poetic-strudel-ab45aa.netlify.app', 'https://wacdo-v1.onrender.com/'];
+
+var corsOptionsDelegate = function (req, callback) {
+  var corsOptions;
+  if (whitelist.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false } // disable CORS for this request
   }
-  
+  callback(null, corsOptions) // callback expects two parameters: error and options
+}
+
 app.use(cors(corsOptionsDelegate))
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-
 
 app.use('/uploads', express.static('api/uploads'));
 app.use('/api', allRoutes);
 
-  
-  app.listen(3000, ()=>{
-      console.log ('Serveur lancé')
-  })
-  
-
-
-  module.exports = app;
+module.exports = app;

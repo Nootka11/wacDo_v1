@@ -33,8 +33,6 @@ router.post('/products/create-multiple-products', auth, roleAuthorization(['admi
 router.get('/products/',  productController.getAllProducts);
 router.get('/products/:id',  productController.getOneProduct);
 
-
-
 //Modifier un produit
 router.put('/products/:id', auth, roleAuthorization(['admin']), upload.single('imageUrl'), productController.modifyProduct)
 // delete
