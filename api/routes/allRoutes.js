@@ -45,7 +45,6 @@ const menuController = require('../controllers/menuController')
 
 // Route pour creer un nouveau menu
 router.post('/menus', auth, roleAuthorization(['admin']), upload.single('image'), menuController.createMenu);
-
 router.get('/menus',  menuController.getAllMenus);
 router.get('/menus/:id',  menuController.getOneMenu);
 
@@ -74,14 +73,14 @@ router.get('/orders/:id', orderController.getOneOrder);
 // Ruta para actualizar una orden (por ejemplo, marcarla como preparada)
 router.put('/orders/:id', auth, roleAuthorization(['admin', 'preparateur']),orderController.updateOrder);
 
-// Rutas para manejar el estado de las órdenes
-router.put('/orders/:id/pending', auth, roleAuthorization(['admin', 'preparateur']), orderController.setPending);       // Para cambiar a "pending"
-router.put('/orders/:id/preparing', auth, roleAuthorization(['admin', 'preparateur']), orderController.setPreparing);   // Para cambiar a "preparing"
-router.put('/orders/:id/completed', auth, roleAuthorization(['admin', 'preparateur']), orderController.setCompleted);   // Para cambiar a "completed"
-router.put('/orders/:id/delivered', auth, roleAuthorization(['admin', 'preparateur', 'accueil']), orderController.setDelivered);
-router.put('/orders/:id/cancelled', auth, roleAuthorization(['admin']), orderController.setCancelled);
+// Routes pour les statuts
+router.patch('/orders/:id/pending', auth, roleAuthorization(['admin', 'preparateur']),orderController.setPending);
+router.patch('/orders/:id/preparing', auth, roleAuthorization(['admin', 'preparateur']),orderController.setPreparing);
+router.patch('/orders/:id/completed', auth, roleAuthorization(['admin', 'preparateur']),orderController.setCompleted);
+router.patch('/orders/:id/delivered', auth, roleAuthorization(['admin', 'preparateur']),orderController.setDelivered);
+router.patch('/orders/:id/cancelled', auth, roleAuthorization(['admin']),orderController.setCancelled);
 
-// Ruta para eliminar una orden
+// Route pour suprimmer une commande
 router.delete('/orders/:id', auth, roleAuthorization(['admin']),orderController.deleteOrder);
 
 
