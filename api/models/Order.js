@@ -7,11 +7,11 @@ const orderSchema = new Schema({
     
     productIds: [{
       type: Schema.Types.ObjectId,
-      ref: 'Products'  // Referencia a los platos de  order
+      ref: 'Product'  // Referencia a los platos de  order
     }],
     menuIds:[{
     type: Schema.Types.ObjectId,
-      ref: 'Menus'  // Referencia a los menus 
+      ref: 'Menu'  // Referencia a los menus 
     }],
     reference: {
       type: String,
@@ -19,6 +19,9 @@ const orderSchema = new Schema({
     total:{
         type:Number,
         required:true
+    },
+    author:{
+     type: String
     },
     status: { type: String, enum: ['pending', 'preparing', 'completed', 'delivered', 'cancelled' ], default: 'pending' },
     createdAt: { type: Date, default: Date.now },

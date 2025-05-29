@@ -77,7 +77,7 @@ router.put('/orders/:id', auth, roleAuthorization(['admin', 'preparateur']),orde
 router.patch('/orders/:id/pending', auth, roleAuthorization(['admin', 'preparateur']),orderController.setPending);
 router.patch('/orders/:id/preparing', auth, roleAuthorization(['admin', 'preparateur']),orderController.setPreparing);
 router.patch('/orders/:id/completed', auth, roleAuthorization(['admin', 'preparateur']),orderController.setCompleted);
-router.patch('/orders/:id/delivered', auth, roleAuthorization(['admin', 'preparateur']),orderController.setDelivered);
+router.patch('/orders/:id/delivered', auth, roleAuthorization(['admin', 'preparateur', 'accueil']),orderController.setDelivered);
 router.patch('/orders/:id/cancelled', auth, roleAuthorization(['admin']),orderController.setCancelled);
 
 // Route pour suprimmer une commande

@@ -6,15 +6,18 @@ const { countItems } = require('../utils/countItems');
 
 // Créer une commande
 exports.createOrder = async (req, res) => {
-  const { productIds = [], menuIds = [] } = req.body;
-
+  
+  const { productIds = [], menuIds = [], author } = req.body;
+  
   try {
     // 1. Récupération des produits
     const products = await Product.find({ _id: { $in: productIds } });
     const productCount = countItems(productIds);
-    let allProducts = [];
+    let allProducts = []; // resolvedProductIds 
+   
 
     products.forEach(product => {
+      
       const quantity = productCount[product._id.toString()] || 0;
       for (let i = 0; i < quantity; i++) {
         allProducts.push(product);
@@ -22,16 +25,20 @@ exports.createOrder = async (req, res) => {
     });
 
     let total = calculateTotal(allProducts);
-
+    
     // 2. Récupération des menus
+    const allMenuIds = [];
+    
     if (menuIds.length > 0) {
+       
       const menus = await Menu.find({ _id: { $in: menuIds } });
       const menuCount = countItems(menuIds);
 
       menus.forEach(menu => {
+         
         const quantity = menuCount[menu._id.toString()] || 1;
         for (let i = 0; i < quantity; i++) {
-          allProducts.push(menu);
+          allMenuIds.push(menu);
           total += menu.price;
         }
       });
@@ -39,9 +46,10 @@ exports.createOrder = async (req, res) => {
 
     // 3. Création et sauvegarde de la commande
     const newOrder = new Order({
-      productIds: allProducts.filter(p => p instanceof Product).map(p => p._id),
-      menuIds,
+      productIds: allProducts,
+      menuIds: allMenuIds,
       total,
+      author,
       status: 'pending'
     });
 
@@ -49,6 +57,7 @@ exports.createOrder = async (req, res) => {
     res.status(201).json(savedOrder);
 
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: 'Erreur lors de la création de la commande', error });
   }
 };
@@ -58,7 +67,17 @@ exports.getAllOrders = async (req, res) => {
   try {
     const { status } = req.query;
     const query = status ? { status } : {};
-    const orders = await Order.find(query).sort({ createdAt: -1 });
+    const orders = await Order.find(query)     
+      .sort({ createdAt: -1 })
+      .populate({
+        path: 'productIds',
+        select: 'name price'    // Solo incluye "name" y "price" de los productos
+      })
+      .populate({
+        path: 'menuIds',
+        select: 'title price'   // Solo incluye "title" y "price" de los menús
+      });
+      
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération des commandes', error });
