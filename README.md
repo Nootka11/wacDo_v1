@@ -58,5 +58,6 @@ Enables seamless interaction across user roles and application modules.
 
 The frontend is built with React and is deployed on Netlify.
 
-⚠️ Note: The backend is hosted on Render. It may take a minute to wake up on the first request due to cold start delays. Please be patient when loading data.
+- Note: The backend is hosted on Render. It may take a minute to wake up on the first request due to cold start delays. Please be patient when loading data.
+
 👉 [Burguer Planet Front on Netlify](https://poetic-strudel-ab45aa.netlify.app/)
