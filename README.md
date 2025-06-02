@@ -55,4 +55,8 @@ Exposes a comprehensive API layer for communication with the frontend.
 Enables seamless interaction across user roles and application modules.
 
 **You can access the frontend here:**
+
+The frontend is built with React and is deployed on Netlify.
+
+⚠️ Note: The backend is hosted on Render. It may take a minute to wake up on the first request due to cold start delays. Please be patient when loading data.
 👉 [Burguer Planet Front on Netlify](https://poetic-strudel-ab45aa.netlify.app/)
